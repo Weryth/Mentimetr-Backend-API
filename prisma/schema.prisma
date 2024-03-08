@@ -16,9 +16,11 @@ model User {
   createdAt            DateTime       @default(now()) @map("created-at")
   acessTokenLastSerial Int            @default(0)
   email                String         @unique
-  password             String
+  password             String?
+  vkId                 String?        @map("vk-id")
   isBanned             Boolean        @default(false)
   refreshToken         RefreshToken[]
+  forms                Forms[]
 }
 
 model RefreshToken {
@@ -27,6 +29,61 @@ model RefreshToken {
   createdAt DateTime @default(now()) @map("created-at")
   token     String   @unique
   expDate   DateTime
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @map("user-id")
+}
+
+model Forms {
+  id             String         @id @default(uuid())
+  updatedAt      DateTime       @updatedAt @map("updated-at")
+  createdAt      DateTime       @default(now()) @map("created-at")
+  title          String
+  type           FormTypes
+  isAnonim       Boolean
+  moderationType ModerationType @map("moderation-type")
+  maxUsers       Int?           @map("max-users")
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  isOpen         FormStates     @default(OPEN)
+  content        FormContent[]
+}
+
+model FormContent {
+  id        String   @id @default(uuid())
+  updatedAt DateTime @updatedAt @map("updated-at")
+  createdAt DateTime @default(now()) @map("created-at")
+  content   Json
+  form      Forms    @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId    String
+}
+
+model VkRelationRequests {
+  id            String                   @id @default(uuid())
+  updatedAt     DateTime                 @updatedAt @map("updated-at")
+  createdAt     DateTime                 @default(now()) @map("created-at")
+  relationToken String                   @default(uuid()) @map("relation-token")
+  vkId          String
+  status        VkRelationRequestsStatus @default(NEW)
+}
+
+enum VkRelationRequestsStatus {
+  NEW
+  CANCELED
+  CLOSED
+}
+
+enum FormTypes {
+  COMMON
+  RLT
+}
+
+enum ModerationType {
+  NONE
+  AUTHOMATIC
+  BY_HANDS
+}
+
+enum FormStates {
+  OPEN
+  CLOSED
 }
