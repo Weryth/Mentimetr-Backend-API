@@ -45,6 +45,12 @@ export class AuthService {
 
   async UserLoginService(data: AuthUserDTO) {
     const user = await this.userService.findOne(data.email);
+    if (user.isBanned) {
+      throw new HttpException(
+        'you has been blocked on this service',
+        HttpStatus.FORBIDDEN,
+      );
+    }
     if (
       user &&
       (await this.decryptUserPsswordService(data.password, user.password))
@@ -71,11 +77,16 @@ export class AuthService {
       if (!token && !(new Date(token.expDate) < new Date())) {
         throw new UnauthorizedException();
       }
-      const newRefreshToken = await this.setRefreshToken(token.userId);
       const user = await this.prismaService.user.findFirst({
         where: { id: token.userId },
       });
-
+      if (user.isBanned) {
+        throw new HttpException(
+          'you has been blocked on this service',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+      const newRefreshToken = await this.setRefreshToken(token.userId);
       const newAccessToken = await this.createToken(token.userId, user.email);
 
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
