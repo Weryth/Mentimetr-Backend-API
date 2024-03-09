@@ -13,6 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
 import { Response } from 'express';
 import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
+import { PrismaSelectData } from 'src/prisma/prisma.select.data';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly prismaSelectData: PrismaSelectData,
   ) {}
 
   async RegisterNewUserService(regData: AuthUserDTO) {
@@ -30,13 +32,7 @@ export class AuthService {
           email: regData.email,
           password: hashedPass,
         },
-        select: {
-          password: false,
-          id: true,
-          email: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+        select: this.prismaSelectData.UserProfileSelect,
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.CONFLICT);

@@ -15,8 +15,10 @@ model User {
   updatedAt            DateTime       @updatedAt @map("updated-at")
   createdAt            DateTime       @default(now()) @map("created-at")
   acessTokenLastSerial Int            @default(0)
+  name                 String         @default(uuid())
   email                String         @unique
   password             String?
+  photo                String?
   vkId                 String?        @map("vk-id")
   isBanned             Boolean        @default(false)
   refreshToken         RefreshToken[]

@@ -8,6 +8,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/auth/strateg/jwt.stategy';
+import { PrismaSelectData } from 'src/prisma/prisma.select.data';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtStrategy } from 'src/auth/strateg/jwt.stategy';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXP}, 
     }),
+    PrismaSelectData,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy]
