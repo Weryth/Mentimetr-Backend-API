@@ -8,7 +8,6 @@ import { FormsService } from '../forms.service';
 export class ContentService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly formService: FormsService
     ) {}
 
   async CreateOneSlide(dataContent: CreateContentDTO, jwtPayload: JwtPayload) {
