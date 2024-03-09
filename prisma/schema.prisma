@@ -46,7 +46,7 @@ model Forms {
   maxUsers       Int?           @map("max-users")
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
-  isOpen         FormStates     @default(OPEN)
+  isOpen         FormStates     @default(CLOSED)
   content        FormContent[]
 }
 

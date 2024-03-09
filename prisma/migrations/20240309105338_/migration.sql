@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Forms" ALTER COLUMN "isOpen" SET DEFAULT 'CLOSED';
