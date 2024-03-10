@@ -9,9 +9,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { VkRelationModule } from './vk-relation/vk-relation.module';
 import { FormsModule } from './forms/forms.module';
+import { ExeptionModule } from './exeption/exeption.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, PrismaModule, VkRelationModule, FormsModule],
+  imports: [AuthModule, UsersModule, PrismaModule, VkRelationModule, FormsModule, ExeptionModule],
   controllers: [AppController],
   providers: [
     AppService,

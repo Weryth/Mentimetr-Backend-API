@@ -11,6 +11,6 @@ export class ContentController {
   
     @Post('create')
     async CreateSlide(@Body() data: CreateContentDTO, @CurrentUser() jwtpayload: JwtPayload){
-        this.contentService.CreateOneSlide(data, jwtpayload)
+        return await this.contentService.CreateOneSlide(data, jwtpayload)
     }
 }

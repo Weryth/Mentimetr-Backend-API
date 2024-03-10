@@ -2,13 +2,16 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FormCreateDTO } from './dto/form.create.dto';
 import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { title } from 'process';
 import { FormUpdateDTO } from './dto/form.update.dto';
 import { FormStates } from '@prisma/client';
+import { ExeptionService } from 'src/exeption/exeption.service';
 
 @Injectable()
 export class FormsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly exeptionService: ExeptionService
+    ) {}
 
   async GetAllUserForms(jwtPayload: JwtPayload) {
     return await this.prismaService.forms.findMany({
@@ -32,10 +35,7 @@ export class FormsService {
     const form = await this.findForm(data.formId);
 
     if (!form || jwtPayload.id != form.userId) {
-      throw new HttpException(
-        'this is not your form, dont do this anymore',
-        HttpStatus.FORBIDDEN,
-      );
+      throw this.exeptionService.userIsNowOwner
     }
     if (form.isOpen == FormStates.OPEN) {
       throw new HttpException(
@@ -59,10 +59,7 @@ export class FormsService {
     try {
       const form = await this.findForm(formId);
       if (form.userId != jwtPayload.id) {
-        throw new HttpException(
-          'this is not your form, dont do this anymore',
-          HttpStatus.FORBIDDEN,
-        );
+        throw this.exeptionService.userIsNowOwner
       }
       return await this.prismaService.forms.delete({ where: { id: formId } });
     } catch (error) {
